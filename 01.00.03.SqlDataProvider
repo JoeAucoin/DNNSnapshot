@@ -1,0 +1,43 @@
+﻿/************************************************************/
+/*****              SqlDataProvider                     *****/
+/*****                                                  *****/
+/*****                                                  *****/
+/***** Note: To manually execute this script you must   *****/
+/*****       perform a search and replace operation     *****/
+/*****       for {databaseOwner} and {objectQualifier}  *****/
+/*****                                                  *****/
+/************************************************************/
+
+
+
+/** Drop Existing Stored Procedures **/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'{databaseOwner}[{objectQualifier}GIBS_GetDNNSnapshotModules]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	drop procedure {databaseOwner}{objectQualifier}GIBS_GetDNNSnapshotModules
+GO
+
+/** Create Stored Procedures **/
+
+
+CREATE procedure {databaseOwner}{objectQualifier}GIBS_GetDNNSnapshotModules
+
+as
+
+SELECT
+Distinct t.TabID, t.PortalID, md.FriendlyName
+
+FROM 
+{objectQualifier}Tabs t
+INNER JOIN {objectQualifier}TabModules tm ON t.TabID = tm.TabID
+INNER JOIN {objectQualifier}Modules m on tm.ModuleID = m.ModuleID
+INNER JOIN {objectQualifier}ModuleDefinitions md ON m.ModuleDefID = md.ModuleDefID
+INNER JOIN {objectQualifier}ModuleControls mc on mc.ModuleDefID = md.ModuleDefID
+
+WHERE FriendlyName = 'DNNSnapshot' AND (tm.IsDeleted = 0)
+
+GO
+
+
+/************************************************************/
+/*****              SqlDataProvider                     *****/
+/************************************************************/
