@@ -111,8 +111,8 @@ namespace GIBS.Modules.DNNSnapshot
                     StartDuration();
                     
                     Bitmap bmp = ClassWSThumb.GetWebSiteThumbnail(settingsData.UrlToCheck, Int32.Parse(settingsData.BrowserWidth), Int32.Parse(settingsData.BrowserHeight), Int32.Parse(settingsData.ThumbWidth), Int32.Parse(settingsData.ThumbHeight));
-                    string MyFileName = settingsData.UrlToCheck.Replace("http://", "");
-                    MyFileName = MyFileName.Replace("/", "");
+                    string MyFileName = settingsData.UrlToCheck.Replace("http://", "").Replace("https://", "");
+                    MyFileName = MyFileName.Replace("/", "\\");
                     bmp.Save(PortalSettings.HomeDirectoryMapPath.ToString() + settingsData.ImageFolder + MyFileName + ".jpg", ImageFormat.Jpeg);
                     ImageBox.ImageUrl = "~" + PortalSettings.HomeDirectory.ToString() + settingsData.ImageFolder + MyFileName + ".jpg";
                     ImageBox.Visible = true;
@@ -141,15 +141,17 @@ namespace GIBS.Modules.DNNSnapshot
                 StartDuration();
                 DNNSnapshotSettings settingsData = new DNNSnapshotSettings(this.TabModuleId);
                 Bitmap bmp = ClassWSThumb.GetWebSiteThumbnail(txtURL.Text.ToString(), Int32.Parse(settingsData.BrowserWidth), Int32.Parse(settingsData.BrowserHeight), Int32.Parse(settingsData.ThumbWidth), Int32.Parse(settingsData.ThumbHeight));
-                string MyFileName = txtURL.Text.ToString().Replace("http://", "");
-                MyFileName = MyFileName.Replace("/", "_");
+                string MyFileName = txtURL.Text.ToString().Replace("https://", "").Replace("http://", "");
+                MyFileName = MyFileName.Replace("/", "\\");
+                lblDebug.Text = PortalSettings.HomeDirectoryMapPath.ToString() + settingsData.ImageFolder.ToString().Replace("/", "\\").ToString() + MyFileName.ToString() + ".jpg";
+
                 bmp.Save(PortalSettings.HomeDirectoryMapPath.ToString() + settingsData.ImageFolder + MyFileName + ".jpg", ImageFormat.Jpeg);
-                ImageBox.ImageUrl = "~" + PortalSettings.HomeDirectory.ToString() + settingsData.ImageFolder + MyFileName + ".jpg";
+                ImageBox.ImageUrl = "~" + PortalSettings.HomeDirectory.ToString() + settingsData.ImageFolder.ToString().Replace("/", "\\").ToString() + MyFileName + ".jpg";
                 ImageBox.Visible = true;
                 StopDuration();
 
                 string SnapURL = PortalSettings.HomeDirectory.ToString() + settingsData.ImageFolder + MyFileName + ".jpg";
-                SendNotifications(SnapURL);            
+            //    SendNotifications(SnapURL);            
             }
 
             catch (Exception ex)

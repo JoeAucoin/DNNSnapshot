@@ -83,7 +83,10 @@ namespace GIBS.Modules.DNNSnapshot
 
         private void BindFolders()
         {
-            ArrayList folders = FileSystemUtils.GetFolders(PortalId);
+            var folders = FolderManager.Instance.GetFolders(PortalId);
+
+            //DotNetNuke.Services.FileSystem.FolderManager new folderManager  FolderManager();
+          //  ArrayList folders = FolderManager.Instance.GetFolders(PortalId);
             foreach (FolderInfo folder in folders)
             {
                 ListItem FolderItem = new ListItem();

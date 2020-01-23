@@ -76,11 +76,11 @@ namespace GIBS.DNNSnapshot.Components
             {
                 if (createdByUserName == null)
                 {
-                    int portalId = PortalController.GetCurrentPortalSettings().PortalId;
-                    UserInfo user = UserController.GetUser(portalId, createdByUser, false);
+                    int portalId = PortalController.Instance.GetCurrentPortalSettings().PortalId;
+                    UserController controller = new UserController();
+                    UserInfo user = controller.GetUser(portalId, createdByUser);
                     createdByUserName = user.DisplayName;
                 }
-
                 return createdByUserName;
             }
         }
