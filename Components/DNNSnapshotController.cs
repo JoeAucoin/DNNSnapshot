@@ -9,7 +9,7 @@ using DotNetNuke.Services.Search;
 
 namespace GIBS.DNNSnapshot.Components
 {
-    public class DNNSnapshotController : ISearchable, IPortable
+    public class DNNSnapshotController :  IPortable
     {
 
         #region public method
@@ -83,31 +83,31 @@ namespace GIBS.DNNSnapshot.Components
 
         #endregion
 
-        #region ISearchable Members
+        //#region ISearchable Members
 
-        /// <summary>
-        /// Implements the search interface required to allow DNN to index/search the content of your
-        /// module
-        /// </summary>
-        /// <param name="modInfo"></param>
-        /// <returns></returns>
-        public DotNetNuke.Services.Search.SearchItemInfoCollection GetSearchItems(ModuleInfo modInfo)
-        {
-            SearchItemInfoCollection searchItems = new SearchItemInfoCollection();
+        ///// <summary>
+        ///// Implements the search interface required to allow DNN to index/search the content of your
+        ///// module
+        ///// </summary>
+        ///// <param name="modInfo"></param>
+        ///// <returns></returns>
+        //public DotNetNuke.Services.Search.SearchItemInfoCollection GetSearchItems(ModuleInfo modInfo)
+        //{
+        //    SearchItemInfoCollection searchItems = new SearchItemInfoCollection();
 
-            List<DNNSnapshotInfo> infos = GetDNNSnapshots(modInfo.ModuleID);
+        //    List<DNNSnapshotInfo> infos = GetDNNSnapshots(modInfo.ModuleID);
 
-            foreach (DNNSnapshotInfo info in infos)
-            {
-                SearchItemInfo searchInfo = new SearchItemInfo(modInfo.ModuleTitle, info.Content, info.CreatedByUser, info.CreatedDate,
-                                                    modInfo.ModuleID, info.ItemId.ToString(), info.Content, "Item=" + info.ItemId.ToString());
-                searchItems.Add(searchInfo);
-            }
+        //    foreach (DNNSnapshotInfo info in infos)
+        //    {
+        //        SearchItemInfo searchInfo = new SearchItemInfo(modInfo.ModuleTitle, info.Content, info.CreatedByUser, info.CreatedDate,
+        //                                            modInfo.ModuleID, info.ItemId.ToString(), info.Content, "Item=" + info.ItemId.ToString());
+        //        searchItems.Add(searchInfo);
+        //    }
 
-            return searchItems;
-        }
+        //    return searchItems;
+        //}
 
-        #endregion
+        //#endregion
 
         #region IPortable Members
 

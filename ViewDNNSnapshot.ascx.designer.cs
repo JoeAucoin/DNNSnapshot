@@ -7,20 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GIBS.Modules.DNNSnapshot {
-    
-    
-    public partial class ViewDNNSnapshot {
-        
-        /// <summary>
-        /// ImageBox control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image ImageBox;
-        
+namespace GIBS.Modules.DNNSnapshot
+{
+
+
+    public partial class ViewDNNSnapshot
+    {
+
         /// <summary>
         /// lblURL control.
         /// </summary>
@@ -29,7 +22,7 @@ namespace GIBS.Modules.DNNSnapshot {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DotNetNuke.UI.UserControls.LabelControl lblURL;
-        
+
         /// <summary>
         /// txtURL control.
         /// </summary>
@@ -38,7 +31,7 @@ namespace GIBS.Modules.DNNSnapshot {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtURL;
-        
+
         /// <summary>
         /// RequiredFieldValidator1 control.
         /// </summary>
@@ -47,7 +40,7 @@ namespace GIBS.Modules.DNNSnapshot {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator1;
-        
+
         /// <summary>
         /// Button2 control.
         /// </summary>
@@ -56,7 +49,7 @@ namespace GIBS.Modules.DNNSnapshot {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button Button2;
-        
+
         /// <summary>
         /// lblRequestTime control.
         /// </summary>
@@ -65,7 +58,7 @@ namespace GIBS.Modules.DNNSnapshot {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DotNetNuke.UI.UserControls.LabelControl lblRequestTime;
-        
+
         /// <summary>
         /// lblTime control.
         /// </summary>
@@ -74,7 +67,16 @@ namespace GIBS.Modules.DNNSnapshot {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTime;
-        
+
+        /// <summary>
+        /// ImageBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image ImageBox;
+
         /// <summary>
         /// lblDebug control.
         /// </summary>

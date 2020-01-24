@@ -1,10 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using DotNetNuke.Common.Utilities;
 using DotNetNuke.Entities.Modules;
 using DotNetNuke.Entities.Modules.Actions;
 using DotNetNuke.Services.Exceptions;
@@ -14,6 +9,7 @@ using GIBS.DNNSnapshot.Components;
 using System.Drawing;
 using System.Drawing.Imaging;
 using DotNetNuke.Entities.Portals;
+using System.Linq;
 
 namespace GIBS.Modules.DNNSnapshot
 {
@@ -31,56 +27,35 @@ namespace GIBS.Modules.DNNSnapshot
                 {
                     DNNSnapshotSettings settingsData = new DNNSnapshotSettings(this.TabModuleId);
 
-
                     if (settingsData.AutoLoad == "true" || Request.QueryString["ScheduledTask"] == "true")
                     {
 
                         if (settingsData.UrlToCheck != null)
                         {
-
-
-
                             if (settingsData.UrlToCheck.Length > 1)
                             {
-
+                                txtURL.Text = settingsData.UrlToCheck.ToString();
                                 TakeSnapshot();
-
-                            }
-                            
-
+                            }   
                         }
                         
-
                     }
                     else
                     {
 
-                        
                         if (settingsData.UrlToCheck != null)
-
                         {
                             if (settingsData.UrlToCheck.Length > 1)
                             {
-
-                                txtURL.Text = settingsData.UrlToCheck;
-
+                                txtURL.Text = settingsData.UrlToCheck.ToString();
                             }
-                    
-                        
                         }
-
                         else
-
                         {
                             lblDebug.Text = "Click Settings to Configure Module";
                         }
 
-
-                        
                     }
-
-
-
                     
                 }
                 else
@@ -106,15 +81,16 @@ namespace GIBS.Modules.DNNSnapshot
 
                 if (settingsData.UrlToCheck.Length > 1)
                 {
-                    txtURL.Text = settingsData.UrlToCheck;
-
+                
                     StartDuration();
-                    
-                    Bitmap bmp = ClassWSThumb.GetWebSiteThumbnail(settingsData.UrlToCheck, Int32.Parse(settingsData.BrowserWidth), Int32.Parse(settingsData.BrowserHeight), Int32.Parse(settingsData.ThumbWidth), Int32.Parse(settingsData.ThumbHeight));
-                    string MyFileName = settingsData.UrlToCheck.Replace("http://", "").Replace("https://", "");
+
+                    Bitmap bmp = ClassWSThumb.GetWebSiteThumbnail(txtURL.Text.ToString(), Int32.Parse(settingsData.BrowserWidth), Int32.Parse(settingsData.BrowserHeight), Int32.Parse(settingsData.ThumbWidth), Int32.Parse(settingsData.ThumbHeight));
+                    string MyFileName = txtURL.Text.ToString().Replace("https://", "").Replace("http://", "");
                     MyFileName = MyFileName.Replace("/", "\\");
+                    //     lblDebug.Text = PortalSettings.HomeDirectoryMapPath.ToString() + settingsData.ImageFolder.ToString().Replace("/", "\\").ToString() + MyFileName.ToString() + ".jpg";
+
                     bmp.Save(PortalSettings.HomeDirectoryMapPath.ToString() + settingsData.ImageFolder + MyFileName + ".jpg", ImageFormat.Jpeg);
-                    ImageBox.ImageUrl = "~" + PortalSettings.HomeDirectory.ToString() + settingsData.ImageFolder + MyFileName + ".jpg";
+                    ImageBox.ImageUrl = "~" + PortalSettings.HomeDirectory.ToString() + settingsData.ImageFolder.ToString().Replace("/", "\\").ToString() + MyFileName + ".jpg?timestamp=1";
                     ImageBox.Visible = true;
                     StopDuration();
 
@@ -136,22 +112,9 @@ namespace GIBS.Modules.DNNSnapshot
 
 
             try
-            { 
-                
-                StartDuration();
-                DNNSnapshotSettings settingsData = new DNNSnapshotSettings(this.TabModuleId);
-                Bitmap bmp = ClassWSThumb.GetWebSiteThumbnail(txtURL.Text.ToString(), Int32.Parse(settingsData.BrowserWidth), Int32.Parse(settingsData.BrowserHeight), Int32.Parse(settingsData.ThumbWidth), Int32.Parse(settingsData.ThumbHeight));
-                string MyFileName = txtURL.Text.ToString().Replace("https://", "").Replace("http://", "");
-                MyFileName = MyFileName.Replace("/", "\\");
-                lblDebug.Text = PortalSettings.HomeDirectoryMapPath.ToString() + settingsData.ImageFolder.ToString().Replace("/", "\\").ToString() + MyFileName.ToString() + ".jpg";
-
-                bmp.Save(PortalSettings.HomeDirectoryMapPath.ToString() + settingsData.ImageFolder + MyFileName + ".jpg", ImageFormat.Jpeg);
-                ImageBox.ImageUrl = "~" + PortalSettings.HomeDirectory.ToString() + settingsData.ImageFolder.ToString().Replace("/", "\\").ToString() + MyFileName + ".jpg";
-                ImageBox.Visible = true;
-                StopDuration();
-
-                string SnapURL = PortalSettings.HomeDirectory.ToString() + settingsData.ImageFolder + MyFileName + ".jpg";
-            //    SendNotifications(SnapURL);            
+            {
+                TakeSnapshot();
+           
             }
 
             catch (Exception ex)
@@ -179,52 +142,47 @@ namespace GIBS.Modules.DNNSnapshot
 
         public void SendNotifications(string SnapshotURL)
         {
-            DNNSnapshotSettings settingsData = new DNNSnapshotSettings(this.TabModuleId);
 
-            if (settingsData.EmailAddress.Length > 1)
+            try
             {
 
-                string vPortalAlias = "";
+                DNNSnapshotSettings settingsData = new DNNSnapshotSettings(this.TabModuleId);
 
-                string MailFrom = "";
-                if (settingsData.EmailFrom.Length > 7)
+                if (settingsData.EmailAddress.Length > 1)
                 {
-                    MailFrom = settingsData.EmailFrom;
+               
+                    string MailFrom = PortalSettings.Email.ToString();
+                    string mySubject = settingsData.EmailSubject.ToString();
+                    string SMTPUserName = DotNetNuke.Entities.Controllers.HostController.Instance.GetString("SMTPUsername");
+                    string myBaseURL = this.PortalSettings.DefaultPortalAlias.ToString();
+
+                    string EmailContent = "<p>URL: " + txtURL.Text.ToString() + "<br>Time Taken: " + DateTime.Now + "<br>Snapshot Request Time: " + lblTime.Text + "</p>";
+                    EmailContent += "<p align='center'><img src='http://" + myBaseURL.ToString() + SnapshotURL + "' alt='" + txtURL.Text.ToString() + "'></p>";
+                    EmailContent += "<p>" + PortalSettings.PortalName + " - http://" + myBaseURL.ToString() + Request.RawUrl + "<p>";
+                    
+                    string emailAddress = settingsData.EmailAddress;
+                    var emailListToSend = emailAddress.Split(';').ToList();
+        
+                    string[] emailAttachemnts1 = new string[] { };
+                      string sendToEmailAddress = "";
+
+                    for (int i = 0; i < emailListToSend.Count; i++)
+                    {
+                        sendToEmailAddress = emailListToSend[i].ToString().Trim();
+                        DotNetNuke.Services.Mail.Mail.SendMail(SMTPUserName.ToString(), sendToEmailAddress.ToString(), "", "", sendToEmailAddress.ToString(), DotNetNuke.Services.Mail.MailPriority.Normal, mySubject.ToString(), DotNetNuke.Services.Mail.MailFormat.Html, System.Text.ASCIIEncoding.ASCII, EmailContent.ToString(), emailAttachemnts1, string.Empty, string.Empty, string.Empty, string.Empty, true);
+                                                                               //MailFrom,             MailTo,                     Cc, Bcc,     ReplyTo,                                        Priority,                          Subject,                                       BodyFormat,                         BodyEncoding,           Body,                     Attachments, SMTPServer, SMTPAuthentication, SMTPUsername, SMTPPassword, SMTPEnableSSL
+                    }
+
                 }
-                else
-                {
-                    MailFrom = PortalSettings.Email;
-                }
-
-
-                PortalAliasController paController = new PortalAliasController();
-                PortalAliasCollection aliasCollection = paController.GetPortalAliasByPortalID(this.PortalId);
-                IDictionaryEnumerator hs = aliasCollection.GetEnumerator();
-                hs.MoveNext();
-                PortalAliasInfo paInfo = (PortalAliasInfo)hs.Entry.Value;
-
-                vPortalAlias = paInfo.HTTPAlias;
-
-
-                string EmailContent = "<p>URL: " +txtURL.Text.ToString() + "<br>Time Taken: " + DateTime.Now + "<br>Snapshot Request Time: " + lblTime.Text + "</p>";
-                EmailContent += "<p align='center'><img src='http://" + vPortalAlias + SnapshotURL + "'></p>";
-                EmailContent += "<p>" + PortalSettings.PortalName + " - http://" +  vPortalAlias +  Request.RawUrl + "<p>";
-                string emailAddress = settingsData.EmailAddress;
-                string[] valuePair = emailAddress.Split(new char[] { ';' });
-
-                for (int i = 0; i <= valuePair.Length - 1; i++)
-                {
-                    // DotNetNuke.Services.Mail.Mail.SendEmail(PortalSettings.Email, valuePair[i].ToString().Trim(), settingsData.EmailSubject, EmailContent.ToString());
-                    DotNetNuke.Services.Mail.Mail.SendMail(MailFrom, valuePair[i].ToString().Trim(), "", settingsData.EmailSubject + " - " + txtURL.Text.ToString(), EmailContent.ToString(), Server.MapPath("") +  SnapshotURL, "HTML", "", "", "", "");
-                }
-
-
 
             }
 
+            catch (Exception ex)
+            {
+                Exceptions.ProcessModuleLoadException(this, ex);
+            }
 
-
-        }
+            }
 
 
 
@@ -253,49 +211,7 @@ namespace GIBS.Modules.DNNSnapshot
         #endregion
 
 
-        /// <summary>
-        /// Handles the items being bound to the datalist control. In this method we merge the data with the
-        /// template defined for this control to produce the result to display to the user
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void lstContent_ItemDataBound(object sender, System.Web.UI.WebControls.DataListItemEventArgs e)
-        {
-            //Label content = (Label)e.Item.FindControl("lblContent");
-            //string contentValue = string.Empty;
 
-            //DNNSnapshotSettings settingsData = new DNNSnapshotSettings(this.TabModuleId);
-
-            //if (settingsData.Template != null)
-            //{
-            //    //apply the content to the template
-            //    ArrayList propInfos = CBO.GetPropertyInfo(typeof(DNNSnapshotInfo));
-            //    contentValue = settingsData.Template;
-
-            //    if (contentValue.Length != 0)
-            //    {
-            //        foreach (PropertyInfo propInfo in propInfos)
-            //        {
-            //            object propertyValue = DataBinder.Eval(e.Item.DataItem, propInfo.Name);
-            //            if (propertyValue != null)
-            //            {
-            //                contentValue = contentValue.Replace("[" + propInfo.Name.ToUpper() + "]",
-            //                        Server.HtmlDecode(propertyValue.ToString()));
-            //            }
-            //        }
-            //    }
-            //    else
-            //        //blank template so just set the content to the value
-            //        contentValue = Server.HtmlDecode(DataBinder.Eval(e.Item.DataItem, "Content").ToString());
-            //}
-            //else
-            //{
-            //    //no template so just set the content to the value
-            //    contentValue = Server.HtmlDecode(DataBinder.Eval(e.Item.DataItem, "Content").ToString());
-            //}
-
-            //content.Text = contentValue;
-        }
 
     }
 }

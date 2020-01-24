@@ -1,5 +1,5 @@
 ﻿<dotnetnuke type="Package" version="5.0">
-  <packages><package name="GIBS.DNNSnapshot" type="Module" version="1.0.7">
+  <packages><package name="GIBS.DNNSnapshot" type="Module" version="1.0.8">
   <friendlyName>DNNSnapshot</friendlyName>
   <description>Provides a snapshot screenshot of of any web page.</description>
   <owner>
@@ -24,7 +24,7 @@
         </script>
         <script type="UnInstall">
           <name>Uninstall.SqlDataProvider</name>
-          <version>1.0.7</version>
+          <version>1.0.8</version>
         </script>
       </scripts>
     </component>
